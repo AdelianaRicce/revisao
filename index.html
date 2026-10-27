@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Revisão de textos, formatação ABNT e curso básico de Word. Calcule seu orçamento na hora.">
+<title>Ade Revisão</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600;7..72,700&family=Figtree:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Caveat:wght@600&display=swap">
+<style>
+/* Layout: página única, coluna de leitura de ~68ch; a "caneta vermelha" do revisor é o único acento forte */
+:root{
+  --paper:#F6F7FA; --surface:#FFFFFF; --ink:#1B2440; --muted:#59627D;
+  --line:#DCE0EA; --pen:#C4313B; --pen-soft:#FBEAEB; --blue:#2C4C99; --blue-soft:#E8EDF8;
+  --f-display:"Literata", Georgia, "Times New Roman", serif;
+  --f-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --f-hand:"Caveat", "Segoe Print", cursive;
+  --radius:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#11162A; --surface:#192037; --ink:#E6E9F2; --muted:#9CA4BE;
+  --line:#2B3450; --pen:#F07780; --pen-soft:#3A1F2A; --blue:#93ABF0; --blue-soft:#1F2A4A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#11162A; --surface:#192037; --ink:#E6E9F2; --muted:#9CA4BE;
+  --line:#2B3450; --pen:#F07780; --pen-soft:#3A1F2A; --blue:#93ABF0; --blue-soft:#1F2A4A; color-scheme:dark}
+
+[hidden]{display:none!important}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+h1,h2,h3{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+h2{font-size:clamp(1.7rem,3.4vw,2.3rem);font-weight:600}
+h3{font-size:1.2rem;font-weight:600}
+p{margin:0}
+a{color:var(--blue)}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.lead{color:var(--muted);max-width:62ch}
+section{padding-block:72px;border-top:1px solid var(--line)}
+.sec-head{display:grid;gap:10px;margin-bottom:36px}
+
+/* topo */
+.top{padding-block:20px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-weight:700;font-size:1.25rem;text-decoration:none;color:var(--ink)}
+.brand span{color:var(--pen)}
+.top nav{display:flex;gap:18px;flex-wrap:wrap}
+.top nav a{color:var(--muted);text-decoration:none;font-size:.95rem}
+.top nav a:hover{color:var(--ink)}
+
+/* hero */
+.hero{padding-block:56px 72px;display:grid;gap:28px}
+.hero h1{font-size:clamp(2.3rem,6vw,4.1rem);font-weight:600;max-width:15ch;line-height:1.25}
+.fix{position:relative;display:inline-block;white-space:nowrap}
+.fix del{text-decoration:none;position:relative;color:var(--muted)}
+.fix del::after{content:"";position:absolute;left:-4%;right:-4%;top:52%;height:3px;background:var(--pen);transform:rotate(-4deg);border-radius:2px}
+.fix ins{position:absolute;left:8%;top:-.85em;font-family:var(--f-hand);color:var(--pen);text-decoration:none;font-size:.62em;transform:rotate(-5deg);white-space:nowrap}
+.hero .lead{font-size:1.15rem}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:999px;font:600 .98rem var(--f-body);border:1.5px solid var(--ink);background:var(--ink);color:var(--paper);text-decoration:none;cursor:pointer}
+.btn:hover{opacity:.9}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.pen{background:var(--pen);border-color:var(--pen);color:#fff}
+.norm-strip{display:flex;gap:10px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.85rem}
+.norm-strip span{padding:4px 10px;border:1px solid var(--line);border-radius:6px;color:var(--muted);background:var(--surface)}
+
+/* tabela de serviços */
+.price-list{display:grid;gap:0;border-top:2px solid var(--ink)}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 32px;padding:22px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.row p{color:var(--muted);grid-column:1;max-width:60ch}
+.row .price{grid-row:1 / span 2;grid-column:2;font-family:var(--f-mono);font-size:1.15rem;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.row .price small{display:block;font-family:var(--f-body);font-size:.78rem;color:var(--muted)}
+.notes{margin-top:18px;display:grid;gap:6px;font-size:.92rem;color:var(--muted)}
+.notes b{color:var(--ink);font-weight:600}
+.group-label{font-family:var(--f-display);font-size:1.35rem;margin:44px 0 12px;font-weight:600}
+
+/* calculadora */
+.calc{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:28px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px;display:grid;gap:22px}
+.tabs{display:flex;gap:6px;background:var(--paper);padding:4px;border-radius:999px;border:1px solid var(--line);width:max-content;max-width:100%}
+.tabs button{border:0;background:transparent;font:600 .92rem var(--f-body);color:var(--muted);padding:8px 16px;border-radius:999px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+.field{display:grid;gap:8px}
+.field > label, .legend{font-weight:600;font-size:.95rem}
+.hint{font-size:.85rem;color:var(--muted)}
+input[type=number]{font:500 1.1rem var(--f-mono);padding:12px 14px;border:1.5px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);width:100%;font-variant-numeric:tabular-nums}
+input[type=number]:focus{border-color:var(--blue);outline:none}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1.5px solid var(--line);border-radius:8px;cursor:pointer}
+.opt:has(input:checked){border-color:var(--blue);background:var(--blue-soft)}
+.opt input{margin-top:5px;accent-color:var(--blue)}
+.opt .t{display:flex;justify-content:space-between;gap:12px;flex:1;flex-wrap:wrap}
+.opt .v{font-family:var(--f-mono);font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.lauda-meter{font-family:var(--f-mono);font-size:.88rem;color:var(--blue)}
+
+.receipt{position:sticky;top:calc(16px + env(safe-area-inset-top, 0px));background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px;display:grid;gap:16px}
+.receipt h3{font-size:1.05rem}
+.lines{display:grid;gap:8px;font-size:.93rem}
+.line{display:flex;justify-content:space-between;gap:16px}
+.line span:last-child{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.line.add span:first-child{color:var(--pen)}
+.total{border-top:2px dashed var(--line);padding-top:14px;display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.total b{font-family:var(--f-mono);font-size:2rem;font-weight:500;font-variant-numeric:tabular-nums}
+.receipt .btn{justify-content:center}
+.copied{font-size:.85rem;color:var(--blue);min-height:1.2em}
+
+/* sobre */
+.about{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px}
+.about p + p{margin-top:14px}
+.norms{display:grid;gap:14px}
+.norm{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 16px;padding:16px 18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius)}
+.norm code{font-family:var(--f-mono);font-size:.85rem;color:var(--pen);grid-row:1 / span 2;padding-top:2px;white-space:nowrap}
+.norm b{font-weight:600}
+.norm span{color:var(--muted);font-size:.92rem}
+
+/* processo */
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;counter-reset:s}
+.step{display:grid;gap:8px;align-content:start}
+.step::before{counter-increment:s;content:counter(s);font-family:var(--f-hand);font-size:2.2rem;color:var(--pen);line-height:1}
+.step p{color:var(--muted);font-size:.95rem}
+
+/* curso */
+.course{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:36px}
+.course ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.course li{display:flex;gap:12px;align-items:baseline}
+.course li::before{content:"¶";font-family:var(--f-display);color:var(--blue);font-weight:700}
+.tag{display:inline-block;font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--pen);background:var(--pen-soft);padding:4px 10px;border-radius:999px;width:max-content}
+
+/* contato */
+.contact{display:grid;gap:16px;max-width:640px}
+.contact-box{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:var(--f-mono);font-size:1.05rem}
+footer{padding-block:32px;border-top:1px solid var(--line);color:var(--muted);font-size:.88rem}
+
+@media (max-width:820px){
+  .calc,.about,.course{grid-template-columns:minmax(0,1fr)}
+  .receipt{position:static}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .course{padding:24px}
+  section{padding-block:56px}
+}
+@media (max-width:460px){
+  .steps{grid-template-columns:minmax(0,1fr)}
+  .top nav{gap:12px}
+  .panel,.receipt{padding:20px}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#inicio">Ade<span>.</span> Revisão</a>
+    <nav aria-label="Seções">
+      <a href="#servicos">Serviços</a>
+      <a href="#orcamento">Orçamento</a>
+      <a href="#sobre">Sobre</a>
+      <a href="#curso">Curso de Word</a>
+      <a href="#contato">Contato</a>
+    </nav>
+  </header>
+
+  <div class="hero" id="inicio">
+    <p class="eyebrow">Revisão de textos e formatação ABNT</p>
+    <h1>Seu trabalho <span class="fix"><del>quase</del><ins>totalmente</ins></span> pronto para a entrega.</h1>
+    <p class="lead">Reviso ortografia, gramática e estrutura do seu texto e formato tudo conforme as normas da ABNT ou o manual da sua instituição. Você recebe o arquivo corrigido e pronto para entregar.</p>
+    <div class="cta-row">
+      <a class="btn pen" href="#orcamento">Calcular meu orçamento</a>
+      <a class="btn ghost" href="#servicos">Ver serviços e valores</a>
+    </div>
+    <div class="norm-strip" aria-label="Normas atendidas">
+      <span>NBR 14724</span><span>NBR 10520</span><span>NBR 6023</span>
+    </div>
+  </div>
+</div>
+
+<section id="servicos">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Serviços e valores</p>
+      <h2>Escolha o nível de revisão</h2>
+      <p class="lead">Os valores de revisão são cobrados por lauda. Uma lauda equivale a 2.100 caracteres com espaço.</p>
+    </div>
+
+    <div class="price-list">
+      <div class="row"><h3>Revisão comum</h3><span class="price">R$ 12,00<small>por lauda</small></span>
+        <p>Adequação do texto quanto à gramática, pontuação, ortografia e concordância. Inclui ajustes de vícios de linguagem, repetições, estrutura e legibilidade.</p></div>
+      <div class="row"><h3>Revisão com formatação</h3><span class="price">R$ 15,00<small>por lauda</small></span>
+        <p>Revisão comum + formatação do texto conforme as normas ABNT ou as exigências específicas da instituição de ensino do autor.</p></div>
+      <div class="row"><h3>Revisão com formatação e conferência bibliográfica</h3><span class="price">R$ 18,00<small>por lauda</small></span>
+        <p>Revisão comum + formatação + conferência das citações e da bibliografia usada na elaboração do texto.</p></div>
+      <div class="row"><h3>Declaração do revisor</h3><span class="price">R$ 50,00<small>valor único</small></span>
+        <p>Declaração assinada pela revisora, emitida após o pagamento da revisão contratada.</p></div>
+    </div>
+    <div class="notes">
+      <p><b>Lauda:</b> 2.100 caracteres com espaço.</p>
+      <p><b>Mais de 5 autores:</b> a declaração tem adicional de R$ 3,00 por autor.</p>
+      <p><b>Urgência:</b> prazos menores que 15 dias têm acréscimo de 15% sobre o valor final.</p>
+    </div>
+
+    <p class="group-label">Produção de textos</p>
+    <div class="price-list">
+      <div class="row"><h3>Produção de trabalhos acadêmicos</h3><span class="price">R$ 35,00<small>por lauda</small></span>
+        <p>Elaboração, formatação e revisão de texto a partir de fontes científicas enviadas por você.</p></div>
+      <div class="row"><h3>Redação de textos para blogs e noticiários</h3><span class="price">R$ 0,10<small>por palavra</small></span>
+        <p>Elaboração, formatação e revisão de texto a partir de fontes e modelos enviados por você.</p></div>
+    </div>
+    <div class="notes">
+      <p><b>Carga de leitura:</b> adicional de R$ 40,00 para leitura extra de artigos ou livros de até 30 páginas.</p>
+    </div>
+  </div>
+</section>
+
+<section id="orcamento">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Orçamento na hora</p>
+      <h2>Calcule quanto fica o seu texto</h2>
+      <p class="lead">No Word, vá em <b>Revisão → Contar Palavras</b> e copie o número de <b>Caracteres (com espaços)</b>.</p>
+    </div>
+
+    <div class="calc">
+      <form class="panel" id="calc-form" novalidate>
+        <div class="tabs" role="tablist" aria-label="Tipo de serviço">
+          <button type="button" role="tab" id="tab-rev" aria-selected="true" data-mode="rev">Revisão</button>
+          <button type="button" role="tab" id="tab-prod" aria-selected="false" data-mode="prod">Produção</button>
+        </div>
+
+        <div id="mode-rev" class="panel-inner" style="display:grid;gap:22px">
+          <div class="field">
+            <label for="chars">Caracteres com espaço</label>
+            <input type="number" id="chars" min="0" step="1" value="42000" inputmode="numeric">
+            <span class="lauda-meter" id="lauda-meter"></span>
+          </div>
+          <fieldset class="field" style="border:0;padding:0;margin:0">
+            <legend class="legend">Tipo de revisão</legend>
+            <div class="opts">
+              <label class="opt"><input type="radio" name="rev" id="rev-comum" value="12"><span class="t"><span>Revisão comum</span><span class="v">R$ 12/lauda</span></span></label>
+              <label class="opt"><input type="radio" name="rev" id="rev-form" value="15" checked><span class="t"><span>Com formatação</span><span class="v">R$ 15/lauda</span></span></label>
+              <label class="opt"><input type="radio" name="rev" id="rev-bib" value="18"><span class="t"><span>Com formatação e conferência bibliográfica</span><span class="v">R$ 18/lauda</span></span></label>
+            </div>
+          </fieldset>
+          <div class="field">
+            <label class="opt"><input type="checkbox" id="decl"><span class="t"><span>Declaração do revisor</span><span class="v">R$ 50</span></span></label>
+          </div>
+          <div class="field" id="autores-field" hidden>
+            <label for="autores">Número de autores do trabalho</label>
+            <input type="number" id="autores" min="1" step="1" value="1" inputmode="numeric">
+            <span class="hint">Acima de 5 autores, R$ 3,00 por autor adicional na declaração.</span>
+          </div>
+        </div>
+
+        <div id="mode-prod" hidden style="display:grid;gap:22px">
+          <fieldset class="field" style="border:0;padding:0;margin:0">
+            <legend class="legend">Tipo de produção</legend>
+            <div class="opts">
+              <label class="opt"><input type="radio" name="prod" id="prod-acad" value="acad" checked><span class="t"><span>Trabalho acadêmico</span><span class="v">R$ 35/lauda</span></span></label>
+              <label class="opt"><input type="radio" name="prod" id="prod-blog" value="blog"><span class="t"><span>Texto para blog ou noticiário</span><span class="v">R$ 0,10/palavra</span></span></label>
+            </div>
+          </fieldset>
+          <div class="field">
+            <label for="qtd" id="qtd-label">Número de laudas</label>
+            <input type="number" id="qtd" min="0" step="1" value="10" inputmode="numeric">
+          </div>
+          <label class="opt"><input type="checkbox" id="leitura"><span class="t"><span>Carga de leitura (artigos/livros até 30 páginas)</span><span class="v">R$ 40</span></span></label>
+        </div>
+
+        <label class="opt"><input type="checkbox" id="urg"><span class="t"><span>Preciso em menos de 15 dias</span><span class="v">+15%</span></span></label>
+      </form>
+
+      <aside class="receipt" aria-live="polite">
+        <h3>Resumo do orçamento</h3>
+        <div class="lines" id="lines"></div>
+        <div class="total"><span>Total</span><b id="total">R$ 0,00</b></div>
+        <a class="btn pen" id="wa-btn" href="#" target="_blank" rel="noopener" hidden>Enviar pelo WhatsApp</a>
+        <button class="btn ghost" type="button" id="copy-btn">Copiar orçamento</button>
+        <span class="copied" id="copied"></span>
+        <p class="hint">Valor estimado. O orçamento final é confirmado após a análise do arquivo.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section id="sobre">
+  <div class="wrap about">
+    <div>
+      <p class="eyebrow">Quem revisa</p>
+      <h2 style="margin:10px 0 20px">Experiência prática com texto acadêmico</h2>
+      <p>Comecei a revisar trabalhos antes mesmo de entrar na faculdade de Letras, e desde então a revisão faz parte da minha rotina. Já acompanhei TCCs, artigos, monografias e relatórios, sempre com o mesmo cuidado: deixar o texto correto, claro e dentro das regras que a sua instituição cobra.</p>
+      <p>Cada trabalho é lido por inteiro. Você recebe o arquivo com as correções e pode tirar dúvidas sobre qualquer ajuste feito.</p>
+    </div>
+    <div class="norms">
+      <p class="eyebrow">Normas com que trabalho</p>
+      <div class="norm"><code>NBR 14724</code><b>Trabalhos acadêmicos</b><span>Estrutura e apresentação: capa, folha de rosto, elementos pré e pós-textuais, margens e espaçamento.</span></div>
+      <div class="norm"><code>NBR 10520</code><b>Citações</b><span>Citações diretas e indiretas, chamadas autor-data e notas.</span></div>
+      <div class="norm"><code>NBR 6023</code><b>Referências</b><span>Montagem e padronização da lista de referências.</span></div>
+      <div class="norm"><code>Manual</code><b>Regras da sua instituição</b><span>Adaptação ao manual próprio da faculdade ou do programa.</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="como-funciona">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Como funciona</p>
+      <h2>Do envio à entrega</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><h3>Envie o arquivo</h3><p>Mande o texto em Word e diga qual revisão precisa e o prazo.</p></div>
+      <div class="step"><h3>Receba o orçamento</h3><p>Confirmo o valor e a data de entrega depois de olhar o arquivo.</p></div>
+      <div class="step"><h3>Faça o pagamento</h3><p>Pagamento por Pix para iniciar a revisão.</p></div>
+      <div class="step"><h3>Receba o texto revisado</h3><p>Entrego o arquivo corrigido e tiro as suas dúvidas.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="curso">
+  <div class="wrap">
+    <div class="course">
+      <div style="display:grid;gap:16px;align-content:start">
+        <span class="tag">Em breve</span>
+        <h2>Curso básico de Word para trabalhos</h2>
+        <p class="lead">Aprenda os comandos que mais travam na hora de formatar um trabalho e pare de perder tempo com numeração que não começa na página certa.</p>
+        <a class="btn" href="#contato" style="width:max-content">Quero ser avisado</a>
+      </div>
+      <div>
+        <p class="eyebrow" style="margin-bottom:14px">O que você vai aprender</p>
+        <ul>
+          <li>Fonte, parágrafo, recuo e espaçamento entre linhas</li>
+          <li>Numeração de páginas a partir de uma página específica</li>
+          <li>Cabeçalho e rodapé</li>
+          <li>Margens e tamanho do papel</li>
+          <li>Listas numeradas e com marcadores</li>
+          <li>Estilos de título para organizar o texto</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contato">
+  <div class="wrap contact">
+    <p class="eyebrow">Contato</p>
+    <h2>Vamos revisar o seu texto?</h2>
+    <p class="lead">Mande o seu arquivo e o orçamento calculado acima. Respondo com o valor final e o prazo.</p>
+    <div class="contact-box"><span id="email-text">aderevisor@gmail.com</span><button class="btn ghost" type="button" id="copy-email">Copiar e-mail</button></div>
+    <span class="copied" id="copied-email"></span>
+  </div>
+</section>
+
+<div class="wrap"><footer>Ade Revisão · Revisão de textos, formatação ABNT e produção de conteúdo</footer></div>
+
+<script>
+// ===== Configure aqui =====
+const CONFIG = {
+  whatsapp: "5545991573392",          // só números com DDI e DDD, ex.: "5545999999999"
+  caracteresPorLauda: 2100,
+  urgencia: 0.15,
+  declaracao: 50,
+  autoresInclusos: 5,
+  adicionalPorAutor: 3,
+  producaoLauda: 35,
+  producaoPalavra: 0.10,
+  cargaLeitura: 40
+};
+// ==========================
+
+const $ = id => document.getElementById(id);
+const brl = v => v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const num = v => Number(v).toLocaleString("pt-BR");
+let mode = "rev";
+let resumo = "";
+
+function calcular(){
+  const linhas = [];
+  let total = 0;
+  if (mode === "rev"){
+    const chars = Math.max(0, Math.floor(+$("chars").value || 0));
+    const laudas = Math.ceil(chars / CONFIG.caracteresPorLauda);
+    $("lauda-meter").textContent = `${num(chars)} caracteres = ${laudas} lauda${laudas===1?"":"s"}`;
+    const sel = document.querySelector('input[name="rev"]:checked');
+    const preco = +sel.value;
+    const nome = sel.closest(".opt").querySelector(".t span").textContent;
+    const sub = preco * laudas;
+    linhas.push([`${nome} · ${laudas} × ${brl(preco)}`, sub]);
+    total += sub;
+    $("autores-field").hidden = !$("decl").checked;
+    if ($("decl").checked){
+      linhas.push(["Declaração do revisor", CONFIG.declaracao]);
+      total += CONFIG.declaracao;
+      const autores = Math.max(1, Math.floor(+$("autores").value || 1));
+      const extras = Math.max(0, autores - CONFIG.autoresInclusos);
+      if (extras){
+        const v = extras * CONFIG.adicionalPorAutor;
+        linhas.push([`${extras} autor${extras===1?"":"es"} acima de ${CONFIG.autoresInclusos}`, v]);
+        total += v;
+      }
+    }
+  } else {
+    const tipo = document.querySelector('input[name="prod"]:checked').value;
+    const qtd = Math.max(0, Math.floor(+$("qtd").value || 0));
+    if (tipo === "acad"){
+      const v = qtd * CONFIG.producaoLauda;
+      linhas.push([`Trabalho acadêmico · ${qtd} × ${brl(CONFIG.producaoLauda)}`, v]); total += v;
+    } else {
+      const v = qtd * CONFIG.producaoPalavra;
+      linhas.push([`Texto para blog · ${num(qtd)} palavras`, v]); total += v;
+    }
+    if ($("leitura").checked){ linhas.push(["Carga de leitura", CONFIG.cargaLeitura]); total += CONFIG.cargaLeitura; }
+  }
+  if ($("urg").checked){
+    const v = total * CONFIG.urgencia;
+    linhas.push(["Urgência (+15%)", v, "add"]); total += v;
+  }
+  $("lines").innerHTML = linhas.map(([t,v,c]) => `<div class="line ${c||""}"><span>${t}</span><span>${brl(v)}</span></div>`).join("");
+  $("total").textContent = brl(total);
+
+  resumo = "Olá! Fiz uma simulação no site:\n" + linhas.map(([t,v]) => `- ${t}: ${brl(v)}`).join("\n") + `\nTotal estimado: ${brl(total)}`;
+  if (CONFIG.whatsapp){
+    $("wa-btn").hidden = false;
+    $("wa-btn").href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(resumo)}`;
+  }
+}
+
+document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => {
+  mode = b.dataset.mode;
+  document.querySelectorAll(".tabs button").forEach(x => x.setAttribute("aria-selected", x === b ? "true" : "false"));
+  $("mode-rev").hidden = mode !== "rev";
+  $("mode-prod").hidden = mode !== "prod";
+  calcular();
+}));
+document.querySelectorAll('input[name="prod"]').forEach(r => r.addEventListener("change", () => {
+  const blog = $("prod-blog").checked;
+  $("qtd-label").textContent = blog ? "Número de palavras" : "Número de laudas";
+  $("qtd").value = blog ? 800 : 10;
+}));
+$("calc-form").addEventListener("input", calcular);
+$("calc-form").addEventListener("change", calcular);
+$("calc-form").addEventListener("submit", e => e.preventDefault());
+
+function copiar(texto, alvo, msg){
+  const ok = () => { $(alvo).textContent = msg; setTimeout(()=>$(alvo).textContent="", 2500); };
+  try {
+    navigator.clipboard.writeText(texto).then(ok).catch(() => { $(alvo).textContent = "Não deu para copiar automaticamente. Selecione o texto e copie."; });
+  } catch(e){ $(alvo).textContent = "Não deu para copiar automaticamente. Selecione o texto e copie."; }
+}
+$("copy-btn").addEventListener("click", () => copiar(resumo, "copied", "Orçamento copiado. Cole na sua mensagem."));
+$("copy-email").addEventListener("click", () => copiar($("email-text").textContent, "copied-email", "E-mail copiado."));
+
+calcular();
+</script>
+</body>
+</html>
